@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>800</width>
-    <height>600</height>
+    <width>807</width>
+    <height>270</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -15,26 +15,73 @@
   </property>
   <widget class="QWidget" name="centralwidget">
    <layout class="QFormLayout" name="formLayout">
-    <item row="0" column="0">
-     <widget class="QLineEdit" name="lineEdit"/>
+    <item row="0" column="0" colspan="2">
+     <layout class="QHBoxLayout" name="horizontalLayout">
+      <item>
+       <widget class="QLabel" name="label_2">
+        <property name="text">
+         <string>Matrix 1</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QLabel" name="label">
+        <property name="text">
+         <string>Matrix 2</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QLabel" name="label_3">
+        <property name="text">
+         <string>Result matrix</string>
+        </property>
+       </widget>
+      </item>
+     </layout>
     </item>
     <item row="1" column="0">
-     <widget class="QLineEdit" name="lineEdit_2"/>
+     <layout class="QHBoxLayout" name="horizontalLayout_2">
+      <item>
+       <widget class="QTableWidget" name="tableWidget_0"/>
+      </item>
+      <item>
+       <widget class="QTableWidget" name="tableWidget_1"/>
+      </item>
+      <item>
+       <widget class="QTableWidget" name="tableWidget_Res"/>
+      </item>
+     </layout>
     </item>
     <item row="2" column="0">
-     <widget class="QLineEdit" name="lineEdit_3"/>
+     <layout class="QHBoxLayout" name="horizontalLayout_3">
+      <item>
+       <widget class="QPushButton" name="pushButton_3">
+        <property name="text">
+         <string>Select 1st file</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QPushButton" name="pushButton">
+        <property name="text">
+         <string>Select 2nd file</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QPushButton" name="pushButton_2">
+        <property name="text">
+         <string>Send Request</string>
+        </property>
+       </widget>
+      </item>
+     </layout>
     </item>
     <item row="3" column="0">
-     <widget class="QPushButton" name="pushButton">
+     <widget class="QLabel" name="label_4">
       <property name="text">
-       <string>Go</string>
-      </property>
-     </widget>
-    </item>
-    <item row="4" column="0">
-     <widget class="QLabel" name="label">
-      <property name="text">
-       <string>out:</string>
+       <string>Status:</string>
       </property>
      </widget>
     </item>
@@ -45,8 +92,8 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>800</width>
-     <height>26</height>
+     <width>807</width>
+     <height>21</height>
     </rect>
    </property>
   </widget>
