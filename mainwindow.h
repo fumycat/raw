@@ -4,6 +4,7 @@
 #include <QMainWindow>
 #include <QNetworkReply>
 #include <QTableWidget>
+#include <QMessageBox>
 
 QT_BEGIN_NAMESPACE
 namespace Ui { class MainWindow; }

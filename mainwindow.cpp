@@ -26,34 +26,6 @@ void MainWindow::on_pushButton_clicked()
 {
     // select 2nd file
     open_matrix_file(1, ui->tableWidget_1);
-    /*
-    QNetworkAccessManager *manager = new QNetworkAccessManager(this);
-    connect(manager, SIGNAL(finished(QNetworkReply*)),
-            this, SLOT(onfinish(QNetworkReply*)));
-
-    QUrl xurl("http://localhost/ajax/");
-    xurl.setPort(6677);
-
-    QNetworkRequest request(xurl);
-    request.setHeader(QNetworkRequest::ContentTypeHeader, "application/json");
-
-    QJsonObject obj;
-    obj["p1"] = ui->lineEdit->text();
-    obj["p2"] = ui->lineEdit_2->text();
-    obj["p3"] = ui->lineEdit_3->text();
-    QJsonDocument doc(obj);
-    QByteArray postData = doc.toJson();
-
-
-    qDebug() << request.url().toString();
-    const QList<QByteArray>& rawHeaderList(request.rawHeaderList());
-    foreach (QByteArray rawHeader, rawHeaderList) {
-      qDebug() << request.rawHeader(rawHeader);
-    }
-    qDebug() << postData;
-
-    manager->post(request, postData);
-    */
 }
 
 void MainWindow::onfinish(QNetworkReply *reply)
@@ -66,18 +38,40 @@ void MainWindow::onfinish(QNetworkReply *reply)
         {
             QByteArray responseData = reply->readAll();
             QString qstr(responseData);
-            ui->label_4->setText(qstr);
+            // ui->label_4->setText(qstr);
+            qDebug() << qstr;
+            QString fileName = QFileDialog::getSaveFileName(this,
+                    tr("Save Output Matrix"), "",
+                    tr("All Files (*)"));
+            QFile file(fileName);
+            if (!file.open(QIODevice::WriteOnly)) {
+                        QMessageBox::information(this, tr("Unable to open file"),
+                            file.errorString());
+                        return;
+                    }
+            file.write(qstr.toUtf8());
+
+
+            QVector<QVector<QString>> matrix;
+            QTextStream in(qstr.toUtf8());
+            QString xd;
+            int n;
+            in >> n;
+            for (int i = 0; i < n; i++) {
+                QVector<QString> l;
+                for (int j = 0; j < n; j++) {
+                    in >> xd;
+                    l.append(xd);
+                }
+                matrix.append(l);
+            }
+            put_data_into_widget(matrix, ui->tableWidget_Res);
         }
 }
 
 void MainWindow::on_pushButton_2_clicked()
 {
     // send request
-
-
-
-
-    // TODO MULTIPART/DATA
     QHttpMultiPart *multiPart = new QHttpMultiPart(QHttpMultiPart::FormDataType);
     QHttpPart textPart0;
     textPart0.setHeader(QNetworkRequest::ContentDispositionHeader, QVariant("form-data; name=\"text0\""));
@@ -90,18 +84,6 @@ void MainWindow::on_pushButton_2_clicked()
     multiPart->append(textPart0);
     multiPart->append(textPart1);
 
-    // request.setHeader(QNetworkRequest::ContentTypeHeader, "text/plain");
-
-//    qDebug() << request.url().toString();
-//    const QList<QByteArray>& rawHeaderList(request.rawHeaderList());
-//    foreach (QByteArray rawHeader, rawHeaderList) {
-//      qDebug() << request.rawHeader(rawHeader);
-//    }
-//    qDebug() << f;
-
-//    QByteArray data = f->readAll();
-//    manager->post(request, data);
-
     QUrl xurl("http://localhost/upload/");
     xurl.setPort(6677);
     QNetworkRequest request(xurl);
@@ -109,12 +91,6 @@ void MainWindow::on_pushButton_2_clicked()
     QNetworkAccessManager *manager = new QNetworkAccessManager(this);
     connect(manager, SIGNAL(finished(QNetworkReply*)), this, SLOT(onfinish(QNetworkReply*)));
     manager->post(request, multiPart);
-
-    //QNetworkAccessManager manager;
-    //QNetworkReply *reply = manager.post(request, multiPart);
-    //qDebug() << reply->readAll();
-
-    // multiPart->setParent(reply);
 }
 
 
@@ -136,11 +112,11 @@ void MainWindow::open_matrix_file(int arr_id, QTableWidget *wid)
     QVector<QVector<QString>> matrix;
     QTextStream in(&f);
     QString xd;
-    int x, y;
-    in >> x >> y;
-    for (int i = 0; i < x; i++) {
+    int n;
+    in >> n;
+    for (int i = 0; i < n; i++) {
         QVector<QString> l;
-        for (int j = 0; j < y; j++) {
+        for (int j = 0; j < n; j++) {
             in >> xd;
             l.append(xd);
         }
