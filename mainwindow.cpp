@@ -13,6 +13,9 @@ MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
     , ui(new Ui::MainWindow)
 {
+    for (int i = 0; i < 2; i++) {
+        files_selected[i] = false;
+    }
     ui->setupUi(this);
 }
 
@@ -26,6 +29,17 @@ void MainWindow::on_pushButton_clicked()
 {
     // select 2nd file
     open_matrix_file(1, ui->tableWidget_1);
+}
+
+void MainWindow::onfinish_test(QNetworkReply *reply)
+{
+    if(reply->error() != QNetworkReply::NoError)
+    {
+        qDebug() << "finish_test_err " << reply->errorString();
+    } else
+    {
+        qDebug() << "finish_test " << reply->readAll();
+    }
 }
 
 void MainWindow::onfinish(QNetworkReply *reply)
@@ -72,6 +86,12 @@ void MainWindow::onfinish(QNetworkReply *reply)
 void MainWindow::on_pushButton_2_clicked()
 {
     // send request
+    if ((!files_selected[0]) || (!files_selected[1])) {
+        QMessageBox::warning(this, tr("Ошибка"),
+                                       tr("Нужно выбрать два файла."),
+                                       QMessageBox::Ok);
+        return;
+    }
     QHttpMultiPart *multiPart = new QHttpMultiPart(QHttpMultiPart::FormDataType);
     QHttpPart textPart0;
     textPart0.setHeader(QNetworkRequest::ContentDispositionHeader, QVariant("form-data; name=\"text0\""));
@@ -102,13 +122,15 @@ void MainWindow::on_pushButton_3_clicked()
 
 void MainWindow::open_matrix_file(int arr_id, QTableWidget *wid)
 {
-    QString fileName = QFileDialog::getOpenFileName(this, tr("Open text file"), "", tr("Text files (*.txt)"));
+    QString fileName = QFileDialog::getOpenFileName(this, tr("Open text file"), "", tr("Text files (*.txt, *)"));
     QFile f(fileName);
-
     if (!f.open(QIODevice::ReadOnly | QIODevice::Text)) {
         qDebug() << "Can't open file";
         return;
     }
+    fnames[arr_id] = fileName;
+    files_selected[arr_id] = true;
+
     QVector<QVector<QString>> matrix;
     QTextStream in(&f);
     QString xd;
@@ -147,4 +169,33 @@ void MainWindow::put_data_into_widget(QVector<QVector<QString>> data, QTableWidg
     }
     wid->setItem(3, 0, new QTableWidgetItem("..."));
     wid->setItem(0, 3, new QTableWidgetItem("..."));
+}
+
+void MainWindow::on_pushButton_4_clicked()
+{
+    // test button
+    if ((!files_selected[0]) || (!files_selected[1])) {
+        QMessageBox::warning(this, tr("Ошибка"),
+                                       tr("Нужно выбрать два файла."),
+                                       QMessageBox::Ok);
+        return;
+    }
+    QHttpMultiPart *multiPart = new QHttpMultiPart(QHttpMultiPart::FormDataType);
+    const int parts = 2;
+    QHttpPart qpart[parts];
+    for (int i = 0; i< parts; ++i) {
+        qpart[i].setHeader(QNetworkRequest::ContentTypeHeader, QVariant("application/octet-stream"));
+        qpart[i].setHeader(QNetworkRequest::ContentDispositionHeader, QVariant(QString("form-data; name=\"file%1\"").arg(i)));
+        QFile *file = new QFile(fnames[i]);
+        file->open(QIODevice::ReadOnly);
+        qpart[i].setBodyDevice(file);
+        multiPart->append(qpart[i]);
+    }
+    QUrl xurl("http://localhost/t/");
+    xurl.setPort(6677);
+    QNetworkRequest request(xurl);
+
+    QNetworkAccessManager *manager = new QNetworkAccessManager(this);
+    connect(manager, SIGNAL(finished(QNetworkReply*)), this, SLOT(onfinish_test(QNetworkReply*)));
+    manager->post(request, multiPart);
 }

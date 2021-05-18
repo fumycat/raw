@@ -20,20 +20,21 @@ public:
 
 private slots:
     void onfinish(QNetworkReply *rep);
+    void onfinish_test(QNetworkReply *rep);
     void on_pushButton_clicked();
 
     void on_pushButton_2_clicked();
 
     void on_pushButton_3_clicked();
 
+    void on_pushButton_4_clicked();
+
 private:
     void open_matrix_file(int arr_id, QTableWidget *wid);
     void put_data_into_widget(QVector<QVector<QString>> data, QTableWidget *wid);
     Ui::MainWindow *ui;
-    QString f1;
-    QString f2;
     QString arr[2];
-    // QTableWidget *tables[3];
-
+    QString fnames[2];
+    bool files_selected[2];
 };
 #endif // MAINWINDOW_H
