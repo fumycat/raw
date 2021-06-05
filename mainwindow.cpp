@@ -1,22 +1,51 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
 
-#include <QtNetwork/QNetworkAccessManager>
-#include <QJsonDocument>
-#include <QJsonObject>
-#include <QUrl>
-#include <QFileDialog>
-#include <QHttpMultiPart>
-#include <QVector>
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
     , ui(new Ui::MainWindow)
 {
+    ui->setupUi(this);
+
     for (int i = 0; i < 2; i++) {
         files_selected[i] = false;
     }
-    ui->setupUi(this);
+
+    ui->lineEdit->setText("C:\\Users\\login\\Documents\\x.txt");
+
+    QString username;
+    QString password;
+    AuthDialog *d = new AuthDialog(&username, &password, this);
+    d->exec();
+
+    if (d->result() == QDialog::Rejected) {
+        qDebug() << "rejected";
+        QTimer::singleShot(0, this, SLOT(close()));
+    } else if (d->result() == QDialog::Accepted) {
+        qDebug() << "accepted" << username << password;
+    }
+
+
+    /*
+    float xt1 = 320.54;
+    QFile f("C:\\Users\\login\\Documents\\bin.bin");
+    f.open(QIODevice::WriteOnly);
+    QDataStream out(&f);
+    out.setFloatingPointPrecision(QDataStream::SinglePrecision);
+    for (int i = 0; i < 1024; i++) {
+        out << xt1;
+    }
+    f.close();
+    */
+//    f.open(QIODevice::ReadOnly);
+//    QDataStream in(&f);
+//    float xo;
+//    for (int i = 0; i < 8; i++) {
+//        in >> xo;
+//        qDebug() << xo;
+//    }
+
 }
 
 MainWindow::~MainWindow()
@@ -24,6 +53,75 @@ MainWindow::~MainWindow()
     delete ui;
 }
 
+int MainWindow::prepare_file(QString filename, QVector<float>* data)
+{
+    float f_tmp;
+    /*
+    QTemporaryFile t;
+    t.open();
+    qDebug() << t.fileName();
+    t.setAutoRemove(false);
+    */
+    QFile f(filename);
+    f.open(QIODevice::WriteOnly);
+    int x = 0;
+    int y = -1;
+    QTextStream stream(f.readAll());
+    QString line;
+    while (stream.readLineInto(&line)) {
+        x++;
+        QStringList xl = line.split(" ");
+        if (y == -1) {
+            y = xl.length();
+        } else {
+            if (y != xl.length()) {
+                return -1;
+            }
+        }
+        for (const auto& s : qAsConst(xl)) {
+            f_tmp = s.toFloat();
+            data->append(f_tmp);
+        }
+    }
+    return 0;
+}
+
+void MainWindow::test_upload()
+{
+    QJsonObject j;
+    QFile f(ui->lineEdit->text());
+    if (!f.open(QIODevice::ReadOnly | QIODevice::Text)) {
+        qDebug() << "Can't open file"; // TODO
+        return;
+    }
+    j["data"] = QString::fromUtf8(f.readAll());
+
+    QNetworkAccessManager *mgr = new QNetworkAccessManager(this);
+    QNetworkRequest request(QUrl(QString(DEFAULT_URL) + "upload"));
+    request.setHeader(QNetworkRequest::ContentTypeHeader, "application/json");
+    QByteArray data = QJsonDocument(j).toJson();
+    ui->statusbar->showMessage("posting...");
+    QNetworkReply *reply = mgr->post(request, data);
+    ui->statusbar->showMessage("sent?");
+
+    QObject::connect(reply, &QNetworkReply::finished, this, [=](){
+        if(reply->error() == QNetworkReply::NoError){
+            QByteArray data = reply->readAll();
+            QJsonDocument qjd = QJsonDocument::fromJson(data);
+            QJsonObject qjo = qjd.object();
+            qDebug() << qjo;
+            if (qjo.contains("status")) {
+                ui->statusbar->showMessage(qjo.value("status").toString());
+            }
+        }
+        else{
+            QString err = reply->errorString();
+            qDebug() << "ERROR" << err;
+            ui->statusbar->showMessage("Unknown error"); // maybe show messagebox?
+        }
+        reply->deleteLater();
+    });
+}
 
 void MainWindow::on_pushButton_clicked()
 {
@@ -174,6 +272,7 @@ void MainWindow::put_data_into_widget(QVector<QVector<QString>> data, QTableWidg
 void MainWindow::on_pushButton_4_clicked()
 {
     // test button
+    /*
     if ((!files_selected[0]) || (!files_selected[1])) {
         QMessageBox::warning(this, tr("Ошибка"),
                                        tr("Нужно выбрать два файла."),
@@ -198,4 +297,16 @@ void MainWindow::on_pushButton_4_clicked()
     QNetworkAccessManager *manager = new QNetworkAccessManager(this);
     connect(manager, SIGNAL(finished(QNetworkReply*)), this, SLOT(onfinish_test(QNetworkReply*)));
     manager->post(request, multiPart);
+    */
+    test_upload();
+}
+
+void MainWindow::on_pushButton_5_clicked()
+{
+    QVector<float>* v = new QVector<float>;
+    int status = prepare_file(ui->lineEdit->text(), v);
+    qDebug() << "prep_file status" << status;
+    qDebug() << "vector size" << v->size();
+
+    delete v;
 }

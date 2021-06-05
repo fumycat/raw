@@ -1,10 +1,24 @@
 #ifndef MAINWINDOW_H
 #define MAINWINDOW_H
 
+#define DEFAULT_URL "http://localhost:6677/"
+
 #include <QMainWindow>
 #include <QNetworkReply>
 #include <QTableWidget>
 #include <QMessageBox>
+#include <QVector>
+#include <QtNetwork/QNetworkAccessManager>
+#include <QJsonDocument>
+#include <QJsonObject>
+#include <QUrl>
+#include <QFileDialog>
+#include <QHttpMultiPart>
+#include <QDataStream>
+#include <QTemporaryFile>
+#include <QTimer>
+
+#include "authdialog.h"
 
 QT_BEGIN_NAMESPACE
 namespace Ui { class MainWindow; }
@@ -29,7 +43,11 @@ private slots:
 
     void on_pushButton_4_clicked();
 
+    void on_pushButton_5_clicked();
+
 private:
+    void test_upload();
+    int prepare_file(QString, QVector<float>*);
     void open_matrix_file(int arr_id, QTableWidget *wid);
     void put_data_into_widget(QVector<QVector<QString>> data, QTableWidget *wid);
     Ui::MainWindow *ui;
