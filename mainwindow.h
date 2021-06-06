@@ -46,10 +46,15 @@ private slots:
 
     void on_pushButton_5_clicked();
 
+    void on_tabWidget_currentChanged(int index);
+
 private:
     QValidator* args_validator;
-    QTableWidget* tables[3];
+    QTableWidget* table[2 * 3];
     QString token;
+
+    void switch_scrollbars(bool, int);
+    void switch_headers(bool, int);
 
     void test_upload();
     int prepare_file(QString, QVector<float>*);

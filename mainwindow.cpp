@@ -1,7 +1,6 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
 
-
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
     , ui(new Ui::MainWindow)
@@ -12,14 +11,18 @@ MainWindow::MainWindow(QWidget *parent)
     args_validator = new QDoubleValidator(this);
     args_validator->setLocale(QLocale::C);
 
-    tables[0] = ui->tableWidget_0;
-    tables[1] = ui->tableWidget_1;
-    tables[2] = ui->tableWidget_Res;
+    table[0] = ui->tableWidget_tab1_A;
+    table[1] = ui->tableWidget_tab1_B;
+    table[2] = ui->tableWidget_tab1_C;
+
+    table[3] = ui->tableWidget_tab2_A;
+    table[4] = ui->tableWidget_tab2_x;
+    table[5] = ui->tableWidget_tab2_y;
 
     // TODO NO
-    for (auto const &w : qAsConst(tables)) {
-        w->setRowCount(PREVIEW_DIM_X);
-        w->setColumnCount(PREVIEW_DIM_Y);
+    for (auto const &w : qAsConst(table)) {
+        w->setRowCount(PREVIEW_DIM_ROWS);
+        w->setColumnCount(PREVIEW_DIM_COLS);
     }
 
     for (int i = 0; i < 2; i++) {
@@ -42,28 +45,27 @@ MainWindow::MainWindow(QWidget *parent)
 
     // Menu
     ui->actionShow_scrollbars->setChecked(true);
-    connect(ui->actionShow_scrollbars, &QAction::toggled, this, [this](bool checked) {
-        Qt::ScrollBarPolicy policy = Qt::ScrollBarAlwaysOff;
-        if (checked) {
-            policy = Qt::ScrollBarAsNeeded;
-        }
-        for (auto const &w : qAsConst(tables)) {
-            w->setVerticalScrollBarPolicy(policy);
-            w->setHorizontalScrollBarPolicy(policy);
-        }
+    connect(ui->actionShow_scrollbars, &QAction::toggled, this, [=](bool checked) {
+        switch_scrollbars(checked, ui->tabWidget->currentIndex());
+    });
+    connect(ui->actionShow_headers, &QAction::toggled, this, [=](bool checked) {
+        switch_headers(checked, ui->tabWidget->currentIndex());
     });
 
-    QTableWidget* wid = ui->tableWidget_0;
-    QString mock[3] = {"31", "23", "64.1231"};
+    QTableWidget* wid = ui->tableWidget_tab2_x;
+    QString mock[3] = {"361.14", "213.21", "648.02"};
+    wid->setRowCount(1);
+    wid->setColumnCount(PREVIEW_DIM_COLS);
 
     //wid->horizontalHeader()->hide();
     //wid->verticalHeader()->hide();
     //wid->horizontalHeader()->setResizeMode(QHeaderView::Fixed);
     //wid->verticalHeader()->setResizeMode(QHeaderView::Fixed);
 
-    for (int i = 0; i < PREVIEW_DIM_X; i++) {
-        for (int j = 0; j < PREVIEW_DIM_Y; j++) {
-            wid->setItem(i, j, new QTableWidgetItem(mock[(i * j) % 3]));
+    // PREVIEW_DIM_ROWS
+    for (int i = 0; i < 1; i++) {
+        for (int j = 0; j < PREVIEW_DIM_COLS; j++) {
+            wid->setItem(i, j, new QTableWidgetItem(mock[j % 3]));
         }
     }
     //wid->setItem(3, 0, new QTableWidgetItem("..."));
@@ -149,7 +151,6 @@ void MainWindow::test_upload()
 void MainWindow::on_pushButton_clicked()
 {
     // select 2nd file
-    open_matrix_file(1, ui->tableWidget_1);
 }
 
 void MainWindow::onfinish_test(QNetworkReply *reply)
@@ -199,7 +200,7 @@ void MainWindow::onfinish(QNetworkReply *reply)
                 }
                 matrix.append(l);
             }
-            put_data_into_widget(matrix, ui->tableWidget_Res);
+            // put_data_into_widget(matrix, ui->tableWidget_Res);
         }
 }
 
@@ -237,7 +238,7 @@ void MainWindow::on_pushButton_2_clicked()
 void MainWindow::on_pushButton_3_clicked()
 {
     // select 1st file
-    open_matrix_file(0, ui->tableWidget_0);
+
 }
 
 void MainWindow::open_matrix_file(int arr_id, QTableWidget *wid)
@@ -331,4 +332,36 @@ void MainWindow::on_pushButton_5_clicked()
     qDebug() << "vector size" << v->size();
 
     delete v;
+}
+
+void MainWindow::switch_scrollbars(bool show, int tab_index)
+{
+    Qt::ScrollBarPolicy policy = Qt::ScrollBarAlwaysOff;
+    if (show) {
+        policy = Qt::ScrollBarAsNeeded;
+    }
+    for (int i = 3 * tab_index; i < 3 * tab_index + 3; i++) {
+        table[i]->setVerticalScrollBarPolicy(policy);
+        table[i]->setHorizontalScrollBarPolicy(policy);
+    }
+}
+
+void MainWindow::switch_headers(bool show, int tab_index)
+{
+    for (int i = 3 * tab_index; i < 3 * tab_index + 3; i++) {
+        if (show) {
+            table[i]->verticalHeader()->show();
+            table[i]->horizontalHeader()->show();
+        }
+        else {
+            table[i]->verticalHeader()->hide();
+            table[i]->horizontalHeader()->hide();
+        }
+    }
+}
+
+void MainWindow::on_tabWidget_currentChanged(int index)
+{
+    switch_scrollbars(ui->actionShow_scrollbars->isChecked(), index);
+    switch_headers(ui->actionShow_headers->isChecked(), index);
 }
