@@ -53,8 +53,8 @@ private:
     QTableWidget* table[2 * 3];
     QString token;
 
-    void switch_scrollbars(bool, int);
-    void switch_headers(bool, int);
+    void toggle_scrollbars(bool, int);
+    void toggle_headers(bool, int);
 
     void test_upload();
     int prepare_file(QString, QVector<float>*);

@@ -46,10 +46,10 @@ MainWindow::MainWindow(QWidget *parent)
     // Menu
     ui->actionShow_scrollbars->setChecked(true);
     connect(ui->actionShow_scrollbars, &QAction::toggled, this, [=](bool checked) {
-        switch_scrollbars(checked, ui->tabWidget->currentIndex());
+        toggle_scrollbars(checked, ui->tabWidget->currentIndex());
     });
     connect(ui->actionShow_headers, &QAction::toggled, this, [=](bool checked) {
-        switch_headers(checked, ui->tabWidget->currentIndex());
+        toggle_headers(checked, ui->tabWidget->currentIndex());
     });
 
     QTableWidget* wid = ui->tableWidget_tab2_x;
@@ -249,7 +249,7 @@ void MainWindow::open_matrix_file(int arr_id, QTableWidget *wid)
         qDebug() << "Can't open file";
         return;
     }
-    fnames[arr_id] = fileName;
+    // fnames[arr_id] = fileName;
     files_selected[arr_id] = true;
 
     QVector<QVector<QString>> matrix;
@@ -334,7 +334,7 @@ void MainWindow::on_pushButton_5_clicked()
     delete v;
 }
 
-void MainWindow::switch_scrollbars(bool show, int tab_index)
+void MainWindow::toggle_scrollbars(bool show, int tab_index)
 {
     Qt::ScrollBarPolicy policy = Qt::ScrollBarAlwaysOff;
     if (show) {
@@ -346,7 +346,7 @@ void MainWindow::switch_scrollbars(bool show, int tab_index)
     }
 }
 
-void MainWindow::switch_headers(bool show, int tab_index)
+void MainWindow::toggle_headers(bool show, int tab_index)
 {
     for (int i = 3 * tab_index; i < 3 * tab_index + 3; i++) {
         if (show) {
@@ -362,6 +362,6 @@ void MainWindow::switch_headers(bool show, int tab_index)
 
 void MainWindow::on_tabWidget_currentChanged(int index)
 {
-    switch_scrollbars(ui->actionShow_scrollbars->isChecked(), index);
-    switch_headers(ui->actionShow_headers->isChecked(), index);
+    toggle_scrollbars(ui->actionShow_scrollbars->isChecked(), index);
+    toggle_headers(ui->actionShow_headers->isChecked(), index);
 }
