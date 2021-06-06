@@ -15,7 +15,8 @@ SOURCES += \
 
 HEADERS += \
     authdialog.h \
-    mainwindow.h
+    mainwindow.h \
+    raw_global.h
 
 FORMS += \
     authdialog.ui \

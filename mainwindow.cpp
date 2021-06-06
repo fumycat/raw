@@ -14,18 +14,13 @@ MainWindow::MainWindow(QWidget *parent)
 
     ui->lineEdit->setText("C:\\Users\\login\\Documents\\x.txt");
 
-    QString username;
-    QString password;
-    AuthDialog *d = new AuthDialog(&username, &password, this);
+    AuthDialog *d = new AuthDialog(&token, this);
     d->exec();
 
     if (d->result() == QDialog::Rejected) {
         qDebug() << "rejected";
         QTimer::singleShot(0, this, SLOT(close()));
-    } else if (d->result() == QDialog::Accepted) {
-        qDebug() << "accepted" << username << password;
     }
-
 
     /*
     float xt1 = 320.54;

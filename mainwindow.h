@@ -1,7 +1,7 @@
 #ifndef MAINWINDOW_H
 #define MAINWINDOW_H
 
-#define DEFAULT_URL "http://localhost:6677/"
+#include "raw_global.h"
 
 #include <QMainWindow>
 #include <QNetworkReply>
@@ -46,6 +46,8 @@ private slots:
     void on_pushButton_5_clicked();
 
 private:
+    QString token;
+
     void test_upload();
     int prepare_file(QString, QVector<float>*);
     void open_matrix_file(int arr_id, QTableWidget *wid);
