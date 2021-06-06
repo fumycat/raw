@@ -37,21 +37,12 @@ public:
 private slots:
     void onfinish(QNetworkReply *rep);
     void onfinish_test(QNetworkReply *rep);
-    void on_pushButton_clicked();
-
-    void on_pushButton_2_clicked();
-
-    void on_pushButton_3_clicked();
-
-    void on_pushButton_4_clicked();
-
-    void on_pushButton_5_clicked();
-
     void on_tabWidget_currentChanged(int index);
 
 private:
     QString token;
     QTableWidget* table[6];
+    QLabel* label_dim[6];
     QString data[6];
     bool file_ok[6];
     QPair<int, int> dim[6];
@@ -60,6 +51,7 @@ private:
 
     void toggle_scrollbars(bool, int);
     void toggle_headers(bool, int);
+    void update_dim_label(int);
 
     void test_upload();
     int prepare_file(QString, QVector<float>*);

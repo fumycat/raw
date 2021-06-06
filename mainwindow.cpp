@@ -11,26 +11,32 @@ MainWindow::MainWindow(QWidget *parent)
     args_validator = new QDoubleValidator(this);
     args_validator->setLocale(QLocale::C);
 
-    ui->lineEdit_tab1_alpha->setValidator(args_validator);
-    ui->lineEdit_tab1_beta->setValidator(args_validator);
-    ui->lineEdit_tab2_alpha->setValidator(args_validator);
-    ui->lineEdit_tab2_beta->setValidator(args_validator);
+    auto edits_for_valid = findChildren<QLineEdit*>(QRegularExpression("^(label).*(alpha|beta)$"));
+    foreach (auto line_e, edits_for_valid) {
+        line_e->setValidator(args_validator);
+    }
 
     table[0] = ui->tableWidget_tab1_A;
     table[1] = ui->tableWidget_tab1_B;
     table[2] = ui->tableWidget_tab1_C;
-
     table[3] = ui->tableWidget_tab2_A;
     table[4] = ui->tableWidget_tab2_x;
     table[5] = ui->tableWidget_tab2_y;
 
+    label_dim[0] = ui->label_tab1_A_dim;
+    label_dim[1] = ui->label_tab1_B_dim;
+    label_dim[2] = ui->label_tab1_C_dim;
+    label_dim[3] = ui->label_tab2_A_dim;
+    label_dim[4] = ui->label_tab2_x_dim;
+    label_dim[5] = ui->label_tab2_y_dim;
+
+    for (const auto &la : label_dim) {
+        la->setText("");
+    }
+
     for (int i = 0; i < 6; i++) {
         file_ok[i] = false;
     }
-
-    // DEL DEBUG LINE EDIT
-    ui->lineEdit->setText("C:\\Users\\login\\Documents\\x.txt");
-
 
 #ifdef DEBUG_TOKEN
     token = DEBUG_TOKEN;
@@ -71,7 +77,7 @@ MainWindow::~MainWindow()
 void MainWindow::test_upload()
 {
     QJsonObject j;
-    QFile f(ui->lineEdit->text());
+    QFile f("C:\\as.txt");
     if (!f.open(QIODevice::ReadOnly | QIODevice::Text)) {
         qDebug() << "Can't open file"; // TODO
         return;
@@ -103,11 +109,6 @@ void MainWindow::test_upload()
         }
         reply->deleteLater();
     });
-}
-
-void MainWindow::on_pushButton_clicked()
-{
-
 }
 
 void MainWindow::onfinish_test(QNetworkReply *reply)
@@ -161,7 +162,8 @@ void MainWindow::onfinish(QNetworkReply *reply)
         }
 }
 
-void MainWindow::on_pushButton_2_clicked()
+// TODO MULTIPART
+/*
 {
     // send request
     if ((!file_ok[0]) || (!file_ok[1])) {
@@ -190,12 +192,7 @@ void MainWindow::on_pushButton_2_clicked()
     connect(manager, SIGNAL(finished(QNetworkReply*)), this, SLOT(onfinish(QNetworkReply*)));
     manager->post(request, multiPart);
 }
-
-
-void MainWindow::on_pushButton_3_clicked()
-{
-
-}
+*/
 
 void MainWindow::open_matrix_file(int arr_id, bool is_vec)
 {
@@ -210,7 +207,6 @@ void MainWindow::open_matrix_file(int arr_id, bool is_vec)
     }
 
     data[arr_id] = f.readAll();
-
 
     // for preview
     QVector<QVector<QString>> matrix;
@@ -239,10 +235,10 @@ void MainWindow::open_matrix_file(int arr_id, bool is_vec)
         QMessageBox::warning(this, tr("Bad file"), tr("Vectors must have exactly 1 row"));
         return;
     }
-    dim[arr_id] = qMakePair(_row, _col);
     file_ok[arr_id] = true;
 
-    qDebug() << dim[arr_id];
+    dim[arr_id] = qMakePair(_row, _col);
+    update_dim_label(arr_id);
 
     put_data_into_widget(matrix, table[arr_id]);
 }
@@ -254,8 +250,6 @@ void MainWindow::put_data_into_widget(QVector<QVector<QString>> data, QTableWidg
 
     int extra_row = (data.length() > PREVIEW_DIM_ROWS) ? 1 : 0;
     int extra_col = (data[0].length() > PREVIEW_DIM_COLS) ? 1 : 0;
-
-    qDebug() << _rows << _cols;
 
     wid->setRowCount(_rows + extra_row);
     wid->setColumnCount(_cols + extra_col);
@@ -273,8 +267,7 @@ void MainWindow::put_data_into_widget(QVector<QVector<QString>> data, QTableWidg
     }
 }
 
-void MainWindow::on_pushButton_4_clicked()
-{
+
     // test button
     /*
     if ((!files_selected[0]) || (!files_selected[1])) {
@@ -302,13 +295,7 @@ void MainWindow::on_pushButton_4_clicked()
     connect(manager, SIGNAL(finished(QNetworkReply*)), this, SLOT(onfinish_test(QNetworkReply*)));
     manager->post(request, multiPart);
     */
-    test_upload();
-}
-
-void MainWindow::on_pushButton_5_clicked()
-{
-
-}
+    // test_upload();
 
 void MainWindow::toggle_scrollbars(bool show, int tab_index)
 {
@@ -334,6 +321,11 @@ void MainWindow::toggle_headers(bool show, int tab_index)
             table[i]->horizontalHeader()->hide();
         }
     }
+}
+
+void MainWindow::update_dim_label(int index)
+{
+    label_dim[index]->setText(QString("(%1x%2)").arg(QString::number(dim[index].first), QString::number(dim[index].second)));
 }
 
 void MainWindow::on_tabWidget_currentChanged(int index)

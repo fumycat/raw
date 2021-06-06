@@ -20,7 +20,7 @@ class AuthDialog : public QDialog
 public:
     explicit AuthDialog(QString*, QWidget *parent = nullptr);
     ~AuthDialog();
-    static void set_label_text_color(QLabel*, QString, QString = "black");
+    static void lolcat(QLabel*, QString = nullptr, QString = "black");
 
 private slots:
     void on_pushButton_auth_clicked();

@@ -18,7 +18,7 @@ AuthDialog::~AuthDialog()
 void AuthDialog::on_pushButton_auth_clicked()
 {
     ui->pushButton_auth->setEnabled(false);
-    set_label_text_color(ui->label_status, "");
+    lolcat(ui->label_status, "");
 
     QNetworkAccessManager *mgr = new QNetworkAccessManager(this);
     QNetworkRequest request(QUrl(QString(DEFAULT_URL) + AUTH_PATH));
@@ -37,13 +37,13 @@ void AuthDialog::on_pushButton_auth_clicked()
             QJsonObject qjo = qjd.object();
             if (qjo.contains("status")) {
                 if (qjo.value("status").toString() == "Ok") {
-                    set_label_text_color(ui->label_status, "Ok");
+                    lolcat(ui->label_status, "Ok");
                     *this->token = qjo.value("token").toString();
                     QDialog::accept();
                 }
                 else {
                     QString err_str = qjo.value("message").toString();
-                    set_label_text_color(ui->label_status, err_str, "red");
+                    lolcat(ui->label_status, err_str, "red");
                     QTimer::singleShot(AUTH_DELAY, this, [this]() { ui->pushButton_auth->setEnabled(true); });
                 }
             }
@@ -51,15 +51,17 @@ void AuthDialog::on_pushButton_auth_clicked()
         else {
             QString err = reply->errorString();
             qDebug() << "ERROR" << err;
-            set_label_text_color(ui->label_status, "Unknown error", "pink");
+            lolcat(ui->label_status, "Unknown error", "pink");
             QTimer::singleShot(AUTH_DELAY, this, [this]() { ui->pushButton_auth->setEnabled(true); });
         }
         reply->deleteLater();
     });
 }
 
-void AuthDialog::set_label_text_color(QLabel* label, QString text, QString color)
+void AuthDialog::lolcat(QLabel* label, QString text, QString color)
 {
     label->setStyleSheet(QString("QLabel { color : %1; }").arg(color));
-    label->setText(text);
+    if (text != nullptr) {
+        label->setText(text);
+    }
 }
