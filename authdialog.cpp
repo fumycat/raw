@@ -18,6 +18,8 @@ AuthDialog::~AuthDialog()
 void AuthDialog::on_pushButton_auth_clicked()
 {
     ui->pushButton_auth->setEnabled(false);
+    set_label_text_color(ui->label_status, "");
+
     QNetworkAccessManager *mgr = new QNetworkAccessManager(this);
     QNetworkRequest request(QUrl(QString(DEFAULT_URL) + AUTH_PATH));
     request.setHeader(QNetworkRequest::ContentTypeHeader, "application/json");
@@ -50,6 +52,7 @@ void AuthDialog::on_pushButton_auth_clicked()
             QString err = reply->errorString();
             qDebug() << "ERROR" << err;
             set_label_text_color(ui->label_status, "Unknown error", "pink");
+            QTimer::singleShot(AUTH_DELAY, this, [this]() { ui->pushButton_auth->setEnabled(true); });
         }
         reply->deleteLater();
     });

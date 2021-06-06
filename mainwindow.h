@@ -17,6 +17,7 @@
 #include <QDataStream>
 #include <QTemporaryFile>
 #include <QTimer>
+#include <QValidator>
 
 #include "authdialog.h"
 
@@ -46,6 +47,8 @@ private slots:
     void on_pushButton_5_clicked();
 
 private:
+    QValidator* args_validator;
+    QTableWidget* tables[3];
     QString token;
 
     void test_upload();

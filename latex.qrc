@@ -1,0 +1,6 @@
+<RCC>
+    <qresource prefix="/images">
+        <file>latex_gemm.png</file>
+        <file>latex_gemv.png</file>
+    </qresource>
+</RCC>

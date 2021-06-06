@@ -8,12 +8,29 @@ MainWindow::MainWindow(QWidget *parent)
 {
     ui->setupUi(this);
 
+    // Validator init
+    args_validator = new QDoubleValidator(this);
+    args_validator->setLocale(QLocale::C);
+
+    tables[0] = ui->tableWidget_0;
+    tables[1] = ui->tableWidget_1;
+    tables[2] = ui->tableWidget_Res;
+
+    // TODO NO
+    for (auto const &w : qAsConst(tables)) {
+        w->setRowCount(PREVIEW_DIM_X);
+        w->setColumnCount(PREVIEW_DIM_Y);
+    }
+
     for (int i = 0; i < 2; i++) {
         files_selected[i] = false;
     }
 
     ui->lineEdit->setText("C:\\Users\\login\\Documents\\x.txt");
 
+#ifdef DEBUG_TOKEN
+    token = DEBUG_TOKEN;
+#else // DEBUG_TOKEN
     AuthDialog *d = new AuthDialog(&token, this);
     d->exec();
 
@@ -21,25 +38,36 @@ MainWindow::MainWindow(QWidget *parent)
         qDebug() << "rejected";
         QTimer::singleShot(0, this, SLOT(close()));
     }
+#endif // DEBUG_TOKEN
 
-    /*
-    float xt1 = 320.54;
-    QFile f("C:\\Users\\login\\Documents\\bin.bin");
-    f.open(QIODevice::WriteOnly);
-    QDataStream out(&f);
-    out.setFloatingPointPrecision(QDataStream::SinglePrecision);
-    for (int i = 0; i < 1024; i++) {
-        out << xt1;
+    // Menu
+    ui->actionShow_scrollbars->setChecked(true);
+    connect(ui->actionShow_scrollbars, &QAction::toggled, this, [this](bool checked) {
+        Qt::ScrollBarPolicy policy = Qt::ScrollBarAlwaysOff;
+        if (checked) {
+            policy = Qt::ScrollBarAsNeeded;
+        }
+        for (auto const &w : qAsConst(tables)) {
+            w->setVerticalScrollBarPolicy(policy);
+            w->setHorizontalScrollBarPolicy(policy);
+        }
+    });
+
+    QTableWidget* wid = ui->tableWidget_0;
+    QString mock[3] = {"31", "23", "64.1231"};
+
+    //wid->horizontalHeader()->hide();
+    //wid->verticalHeader()->hide();
+    //wid->horizontalHeader()->setResizeMode(QHeaderView::Fixed);
+    //wid->verticalHeader()->setResizeMode(QHeaderView::Fixed);
+
+    for (int i = 0; i < PREVIEW_DIM_X; i++) {
+        for (int j = 0; j < PREVIEW_DIM_Y; j++) {
+            wid->setItem(i, j, new QTableWidgetItem(mock[(i * j) % 3]));
+        }
     }
-    f.close();
-    */
-//    f.open(QIODevice::ReadOnly);
-//    QDataStream in(&f);
-//    float xo;
-//    for (int i = 0; i < 8; i++) {
-//        in >> xo;
-//        qDebug() << xo;
-//    }
+    //wid->setItem(3, 0, new QTableWidgetItem("..."));
+    //wid->setItem(0, 3, new QTableWidgetItem("..."));
 
 }
 
@@ -139,13 +167,12 @@ void MainWindow::onfinish(QNetworkReply *reply)
 {
     if(reply->error() != QNetworkReply::NoError)
         {
-            ui->label->setText("Error: " +  reply->errorString());
+            qDebug() << reply->errorString();
         }
         else
         {
             QByteArray responseData = reply->readAll();
             QString qstr(responseData);
-            // ui->label_4->setText(qstr);
             qDebug() << qstr;
             QString fileName = QFileDialog::getSaveFileName(this,
                     tr("Save Output Matrix"), "",
