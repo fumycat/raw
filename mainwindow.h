@@ -18,6 +18,7 @@
 #include <QTemporaryFile>
 #include <QTimer>
 #include <QValidator>
+#include <QPair>
 
 #include "authdialog.h"
 
@@ -49,20 +50,24 @@ private slots:
     void on_tabWidget_currentChanged(int index);
 
 private:
-    QValidator* args_validator;
-    QTableWidget* table[2 * 3];
     QString token;
+    QTableWidget* table[6];
+    QString data[6];
+    bool file_ok[6];
+    QPair<int, int> dim[6];
+
+    QValidator* args_validator;
 
     void toggle_scrollbars(bool, int);
     void toggle_headers(bool, int);
 
     void test_upload();
     int prepare_file(QString, QVector<float>*);
-    void open_matrix_file(int arr_id, QTableWidget *wid);
+    void open_matrix_file(int, bool = false);
     void put_data_into_widget(QVector<QVector<QString>> data, QTableWidget *wid);
     Ui::MainWindow *ui;
-    QString arr[2];
-    QString fnames[2];
-    bool files_selected[2];
+    // QString arr[2];
+    // QString fnames[2];
+
 };
 #endif // MAINWINDOW_H

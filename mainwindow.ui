@@ -186,10 +186,15 @@
         <property name="geometry">
          <rect>
           <x>40</x>
-          <y>60</y>
+          <y>53</y>
           <width>47</width>
-          <height>13</height>
+          <height>20</height>
          </rect>
+        </property>
+        <property name="font">
+         <font>
+          <pointsize>10</pointsize>
+         </font>
         </property>
         <property name="text">
          <string>Matrix A</string>
@@ -199,10 +204,15 @@
         <property name="geometry">
          <rect>
           <x>220</x>
-          <y>60</y>
+          <y>53</y>
           <width>47</width>
-          <height>13</height>
+          <height>20</height>
          </rect>
+        </property>
+        <property name="font">
+         <font>
+          <pointsize>10</pointsize>
+         </font>
         </property>
         <property name="text">
          <string>Matrix B</string>
@@ -212,10 +222,15 @@
         <property name="geometry">
          <rect>
           <x>370</x>
-          <y>60</y>
+          <y>53</y>
           <width>47</width>
-          <height>13</height>
+          <height>20</height>
          </rect>
+        </property>
+        <property name="font">
+         <font>
+          <pointsize>10</pointsize>
+         </font>
         </property>
         <property name="text">
          <string>Matrix C</string>
@@ -229,6 +244,12 @@
           <width>321</width>
           <height>41</height>
          </rect>
+        </property>
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
         </property>
         <property name="text">
          <string/>
@@ -246,8 +267,8 @@
        <widget class="QPushButton" name="btn_tab1_A">
         <property name="geometry">
          <rect>
-          <x>30</x>
-          <y>260</y>
+          <x>40</x>
+          <y>230</y>
           <width>75</width>
           <height>23</height>
          </rect>
@@ -259,8 +280,8 @@
        <widget class="QPushButton" name="btn_tab1_B">
         <property name="geometry">
          <rect>
-          <x>220</x>
-          <y>260</y>
+          <x>210</x>
+          <y>230</y>
           <width>75</width>
           <height>23</height>
          </rect>
@@ -273,7 +294,7 @@
         <property name="geometry">
          <rect>
           <x>390</x>
-          <y>260</y>
+          <y>230</y>
           <width>75</width>
           <height>23</height>
          </rect>
@@ -295,6 +316,62 @@
          <string>CheckBox</string>
         </property>
        </widget>
+       <widget class="QLabel" name="label_tab1_alpha">
+        <property name="geometry">
+         <rect>
+          <x>50</x>
+          <y>270</y>
+          <width>61</width>
+          <height>16</height>
+         </rect>
+        </property>
+        <property name="font">
+         <font>
+          <pointsize>10</pointsize>
+         </font>
+        </property>
+        <property name="text">
+         <string>α (alpha)</string>
+        </property>
+       </widget>
+       <widget class="QLabel" name="label_tab1_beta">
+        <property name="geometry">
+         <rect>
+          <x>190</x>
+          <y>270</y>
+          <width>47</width>
+          <height>16</height>
+         </rect>
+        </property>
+        <property name="font">
+         <font>
+          <pointsize>10</pointsize>
+         </font>
+        </property>
+        <property name="text">
+         <string>β (beta)</string>
+        </property>
+       </widget>
+       <widget class="QLineEdit" name="lineEdit_tab1_alpha">
+        <property name="geometry">
+         <rect>
+          <x>50</x>
+          <y>300</y>
+          <width>61</width>
+          <height>20</height>
+         </rect>
+        </property>
+       </widget>
+       <widget class="QLineEdit" name="lineEdit_tab1_beta">
+        <property name="geometry">
+         <rect>
+          <x>200</x>
+          <y>300</y>
+          <width>61</width>
+          <height>20</height>
+         </rect>
+        </property>
+       </widget>
       </widget>
       <widget class="QWidget" name="tab_2">
        <attribute name="title">
@@ -309,6 +386,12 @@
           <height>41</height>
          </rect>
         </property>
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
         <property name="text">
          <string/>
         </property>
@@ -322,11 +405,16 @@
        <widget class="QLabel" name="label_tab2_A">
         <property name="geometry">
          <rect>
-          <x>70</x>
-          <y>90</y>
+          <x>60</x>
+          <y>70</y>
           <width>47</width>
-          <height>13</height>
+          <height>21</height>
          </rect>
+        </property>
+        <property name="font">
+         <font>
+          <pointsize>10</pointsize>
+         </font>
         </property>
         <property name="text">
          <string>Matrix A</string>
@@ -335,11 +423,16 @@
        <widget class="QLabel" name="label_tab2_x">
         <property name="geometry">
          <rect>
-          <x>150</x>
-          <y>90</y>
+          <x>120</x>
+          <y>70</y>
           <width>47</width>
-          <height>13</height>
+          <height>21</height>
          </rect>
+        </property>
+        <property name="font">
+         <font>
+          <pointsize>10</pointsize>
+         </font>
         </property>
         <property name="text">
          <string>Vector x</string>
@@ -348,11 +441,16 @@
        <widget class="QLabel" name="label_tab2_y">
         <property name="geometry">
          <rect>
-          <x>220</x>
-          <y>90</y>
+          <x>180</x>
+          <y>70</y>
           <width>47</width>
-          <height>13</height>
+          <height>21</height>
          </rect>
+        </property>
+        <property name="font">
+         <font>
+          <pointsize>10</pointsize>
+         </font>
         </property>
         <property name="text">
          <string>Vector y</string>
@@ -485,6 +583,75 @@
         </property>
         <property name="text">
          <string>Select y</string>
+        </property>
+       </widget>
+       <widget class="QLabel" name="label_tab2_alpha">
+        <property name="geometry">
+         <rect>
+          <x>60</x>
+          <y>330</y>
+          <width>61</width>
+          <height>16</height>
+         </rect>
+        </property>
+        <property name="font">
+         <font>
+          <pointsize>10</pointsize>
+         </font>
+        </property>
+        <property name="text">
+         <string>α (alpha)</string>
+        </property>
+       </widget>
+       <widget class="QLineEdit" name="lineEdit_tab2_alpha">
+        <property name="geometry">
+         <rect>
+          <x>60</x>
+          <y>360</y>
+          <width>61</width>
+          <height>20</height>
+         </rect>
+        </property>
+       </widget>
+       <widget class="QLabel" name="label_tab2_beta">
+        <property name="geometry">
+         <rect>
+          <x>200</x>
+          <y>330</y>
+          <width>47</width>
+          <height>16</height>
+         </rect>
+        </property>
+        <property name="font">
+         <font>
+          <pointsize>10</pointsize>
+         </font>
+        </property>
+        <property name="text">
+         <string>β (beta)</string>
+        </property>
+       </widget>
+       <widget class="QLineEdit" name="lineEdit_tab2_beta">
+        <property name="geometry">
+         <rect>
+          <x>210</x>
+          <y>360</y>
+          <width>61</width>
+          <height>20</height>
+         </rect>
+        </property>
+       </widget>
+       <widget class="QCheckBox" name="checkBox_tab2">
+        <property name="geometry">
+         <rect>
+          <x>60</x>
+          <y>390</y>
+          <width>70</width>
+          <height>17</height>
+         </rect>
+        </property>
+        <property name="text">
+         <string>CheckBox</string>
         </property>
        </widget>
       </widget>
