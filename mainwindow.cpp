@@ -70,12 +70,12 @@ MainWindow::MainWindow(QWidget *parent)
 
 
     // PushButtons
-    connect(ui->btn_tab1_A, &QPushButton::clicked, this, [=](){ open_matrix_file(0, false, DEBUG_FILE_A); });
-    connect(ui->btn_tab1_B, &QPushButton::clicked, this, [=](){ open_matrix_file(1, false, DEBUG_FILE_B); });
-    connect(ui->btn_tab1_C, &QPushButton::clicked, this, [=](){ open_matrix_file(2, false, DEBUG_FILE_C); });
-    connect(ui->btn_tab2_A, &QPushButton::clicked, this, [=](){ open_matrix_file(3, false, DEBUG_FILE_A2); });
-    connect(ui->btn_tab2_x, &QPushButton::clicked, this, [=](){ open_matrix_file(4, true, DEBUG_FILE_x); });
-    connect(ui->btn_tab2_y, &QPushButton::clicked, this, [=](){ open_matrix_file(5, true, DEBUG_FILE_y); });
+    connect(ui->btn_tab1_A, &QPushButton::clicked, this, [=](){ open_matrix_file(0, false); });
+    connect(ui->btn_tab1_B, &QPushButton::clicked, this, [=](){ open_matrix_file(1, false); });
+    connect(ui->btn_tab1_C, &QPushButton::clicked, this, [=](){ open_matrix_file(2, false); });
+    connect(ui->btn_tab2_A, &QPushButton::clicked, this, [=](){ open_matrix_file(3, false); });
+    connect(ui->btn_tab2_x, &QPushButton::clicked, this, [=](){ open_matrix_file(4, true); });
+    connect(ui->btn_tab2_y, &QPushButton::clicked, this, [=](){ open_matrix_file(5, true); });
 
 #ifdef DEBUG_AUTO_FILES
     qDebug() << "DEBUG_AUTO_FILES is ON";
