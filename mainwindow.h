@@ -40,9 +40,11 @@ private slots:
     void on_tabWidget_currentChanged(int index);
 
 private:
+    QString server_url;
     QString token;
     QTableWidget* table[6];
     QLabel* label_dim[6];
+    QPushButton* go_btn[2];
     QString data[6];
     bool file_ok[6];
     QPair<int, int> dim[6];
@@ -57,7 +59,7 @@ private:
 
     void test_upload();
     int prepare_file(QString, QVector<float>*);
-    void open_matrix_file(int, bool = false);
+    void open_matrix_file(int, bool is_vec = false, QString debug_filename = nullptr);
     void put_data_into_widget(QVector<QVector<QString>> data, QTableWidget *wid);
     Ui::MainWindow *ui;
     // QString arr[2];

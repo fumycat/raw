@@ -7,6 +7,8 @@ MainWindow::MainWindow(QWidget *parent)
 {
     ui->setupUi(this);
 
+    server_url = DEFAULT_URL;
+
     // Validator init
     args_validator = new QDoubleValidator(this);
     args_validator->setLocale(QLocale::C);
@@ -30,6 +32,9 @@ MainWindow::MainWindow(QWidget *parent)
     label_dim[4] = ui->label_tab2_x_dim;
     label_dim[5] = ui->label_tab2_y_dim;
 
+    go_btn[0] = ui->btn_1_go;
+    go_btn[1] = ui->btn_2_go;
+
     for (const auto &la : label_dim) {
         la->setText("");
     }
@@ -39,6 +44,7 @@ MainWindow::MainWindow(QWidget *parent)
     }
 
 #ifdef DEBUG_TOKEN
+    qDebug() << "DEBUG_TOKEN is ON";
     token = DEBUG_TOKEN;
 #else // DEBUG_TOKEN
     AuthDialog *d = new AuthDialog(&token, this);
@@ -64,12 +70,22 @@ MainWindow::MainWindow(QWidget *parent)
 
 
     // PushButtons
-    connect(ui->btn_tab1_A, &QPushButton::clicked, this, [=](){ open_matrix_file(0); });
-    connect(ui->btn_tab1_B, &QPushButton::clicked, this, [=](){ open_matrix_file(1); });
-    connect(ui->btn_tab1_C, &QPushButton::clicked, this, [=](){ open_matrix_file(2); });
-    connect(ui->btn_tab2_A, &QPushButton::clicked, this, [=](){ open_matrix_file(3); });
-    connect(ui->btn_tab2_x, &QPushButton::clicked, this, [=](){ open_matrix_file(4, true); });
-    connect(ui->btn_tab2_y, &QPushButton::clicked, this, [=](){ open_matrix_file(5, true); });
+    connect(ui->btn_tab1_A, &QPushButton::clicked, this, [=](){ open_matrix_file(0, false, DEBUG_FILE_A); });
+    connect(ui->btn_tab1_B, &QPushButton::clicked, this, [=](){ open_matrix_file(1, false, DEBUG_FILE_B); });
+    connect(ui->btn_tab1_C, &QPushButton::clicked, this, [=](){ open_matrix_file(2, false, DEBUG_FILE_C); });
+    connect(ui->btn_tab2_A, &QPushButton::clicked, this, [=](){ open_matrix_file(3, false, DEBUG_FILE_A2); });
+    connect(ui->btn_tab2_x, &QPushButton::clicked, this, [=](){ open_matrix_file(4, true, DEBUG_FILE_x); });
+    connect(ui->btn_tab2_y, &QPushButton::clicked, this, [=](){ open_matrix_file(5, true, DEBUG_FILE_y); });
+
+#ifdef DEBUG_AUTO_FILES
+    qDebug() << "DEBUG_AUTO_FILES is ON";
+    open_matrix_file(0, false, DEBUG_FILE_A);
+    open_matrix_file(1, false, DEBUG_FILE_B);
+    open_matrix_file(2, false, DEBUG_FILE_C);
+    open_matrix_file(3, false, DEBUG_FILE_A2);
+    open_matrix_file(4, true, DEBUG_FILE_x);
+    open_matrix_file(5, true, DEBUG_FILE_y);
+#endif // DEBUG_AUTO_FILES
 
     connect(ui->btn_1_go, &QPushButton::clicked, this, [=](){ go_send(0); });
     connect(ui->btn_2_go, &QPushButton::clicked, this, [=](){ go_send(1); });
@@ -83,16 +99,57 @@ MainWindow::~MainWindow()
 
 void MainWindow::go_send(int tab_index)
 {
-    qDebug() << tab_index;
-    // test token
-    QNetworkAccessManager *mgr = new QNetworkAccessManager(this);
-    QNetworkRequest request(QUrl(QString(DEFAULT_URL) + GEMM_PATH));
-    request.setHeader(QNetworkRequest::ContentTypeHeader, "application/json");
+    if (!file_ok[0 + 3*tab_index] || !file_ok[1 + 3*tab_index] || !file_ok[2 + 3*tab_index]) {
+        QMessageBox::warning(this, tr("Input error"), tr("One or more files are not selected."));
+        return;
+    }
+    bool bad_ab_flag = false;
+    switch (tab_index) {
+    case 0:
+        if (ui->lineEdit_tab1_alpha->text().isEmpty() || ui->lineEdit_tab1_beta->text().isEmpty()) {
+            bad_ab_flag = true;
+        }
+        break;
+    case 1:
+        if (ui->lineEdit_tab2_alpha->text().isEmpty() || ui->lineEdit_tab2_beta->text().isEmpty()) {
+            bad_ab_flag = true;
+        }
+        break;
+    }
+    if (bad_ab_flag) {
+        QMessageBox::warning(this, tr("Input error"), tr("Enter alpha and beta values."));
+        return;
+    }
+    bool save_C = tab_index == 0 && ui->checkBox_tab1->isChecked();
+    bool save_y = tab_index == 1 && ui->checkBox_tab2->isChecked();
+
+    go_btn[tab_index]->setEnabled(false);
 
     QJsonObject j;
     j["token"] = token;
+    switch (tab_index) {
+    case 0:
+        j["A"] = data[0];
+        j["B"] = data[1];
+        j["C"] = data[2];
+        j["alpha"] = ui->lineEdit_tab1_alpha->text();
+        j["beta"] = ui->lineEdit_tab1_beta->text();
+        break;
+    case 1:
+        j["A"] = data[3];
+        j["x"] = data[4];
+        j["y"] = data[5];
+        j["alpha"] = ui->lineEdit_tab2_alpha->text();
+        j["beta"] = ui->lineEdit_tab2_beta->text();
+        break;
+    }
     QByteArray data = QJsonDocument(j).toJson();
+
+    QNetworkAccessManager *mgr = new QNetworkAccessManager(this);
+    QNetworkRequest request(QUrl(QString(server_url) + (tab_index ? GEMV_PATH : GEMM_PATH)));
+    request.setHeader(QNetworkRequest::ContentTypeHeader, "application/json");
     QNetworkReply *reply = mgr->post(request, data);
+
 
     QObject::connect(reply, &QNetworkReply::finished, this, [=](){
         if(reply->error() == QNetworkReply::NoError){
@@ -106,6 +163,7 @@ void MainWindow::go_send(int tab_index)
                 }
                 else {
                     // BIG TODO
+                    qDebug() << "success";
                 }
             }
         }
@@ -116,6 +174,7 @@ void MainWindow::go_send(int tab_index)
             QMessageBox::critical(this, tr("Server error"), err);
         }
         reply->deleteLater();
+        go_btn[tab_index]->setEnabled(true);
     });
 }
 
@@ -130,7 +189,7 @@ void MainWindow::test_upload()
     j["data"] = QString::fromUtf8(f.readAll());
 
     QNetworkAccessManager *mgr = new QNetworkAccessManager(this);
-    QNetworkRequest request(QUrl(QString(DEFAULT_URL) + "upload"));
+    QNetworkRequest request(QUrl(QString(server_url) + "upload"));
     request.setHeader(QNetworkRequest::ContentTypeHeader, "application/json");
     QByteArray data = QJsonDocument(j).toJson();
     ui->statusbar->showMessage("posting...");
@@ -239,9 +298,11 @@ void MainWindow::onfinish(QNetworkReply *reply)
 }
 */
 
-void MainWindow::open_matrix_file(int arr_id, bool is_vec)
+void MainWindow::open_matrix_file(int arr_id, bool is_vec, QString debug_filename)
 {
-    QString fileName = QFileDialog::getOpenFileName(this, tr("Open text file"), "", tr("Text files (*.txt, *)"));
+    QString fileName = debug_filename == nullptr ?
+                QFileDialog::getOpenFileName(this, tr("Open text file"), "", tr("Text files (*.txt, *)")) : debug_filename;
+
     if (fileName.isEmpty()) {
         return;
     }

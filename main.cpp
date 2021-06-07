@@ -11,8 +11,9 @@ int main(int argc, char *argv[])
     QApplication a(argc, argv);
 
 #ifdef SET_LANG_RU
+    qDebug() << "SET_LANG_RU is ON";
     QTranslator qtLanguageTranslator;
-    qDebug() << qtLanguageTranslator.load("QtLanguage_ru_RU", ":/translations", "_");
+    qtLanguageTranslator.load("QtLanguage_ru_RU", ":/translations", "_");
     qApp->installTranslator(&qtLanguageTranslator);
 #endif
 
