@@ -21,7 +21,7 @@
        <string notr="true"/>
       </property>
       <property name="currentIndex">
-       <number>1</number>
+       <number>0</number>
       </property>
       <widget class="QWidget" name="tab_1">
        <attribute name="title">
@@ -345,7 +345,7 @@
           <item>
            <layout class="QVBoxLayout" name="verticalLayout_1_ab">
             <item>
-             <layout class="QHBoxLayout" name="horizontalLayout_1g" stretch="2,4,2,4">
+             <layout class="QHBoxLayout" name="horizontalLayout_1g" stretch="2,2,2,0">
               <item>
                <widget class="QLabel" name="label_tab1_alpha">
                 <property name="font">
@@ -362,6 +362,9 @@
                <spacer name="horizontalSpacer_6">
                 <property name="orientation">
                  <enum>Qt::Horizontal</enum>
+                </property>
+                <property name="sizeType">
+                 <enum>QSizePolicy::Fixed</enum>
                 </property>
                 <property name="sizeHint" stdset="0">
                  <size>
@@ -399,7 +402,7 @@
              </layout>
             </item>
             <item>
-             <layout class="QHBoxLayout" name="horizontalLayout_1l" stretch="2,4,2,4">
+             <layout class="QHBoxLayout" name="horizontalLayout_1l" stretch="2,2,2,0">
               <item>
                <widget class="QLineEdit" name="lineEdit_tab1_alpha">
                 <property name="sizePolicy">
@@ -414,6 +417,9 @@
                <spacer name="horizontalSpacer_7">
                 <property name="orientation">
                  <enum>Qt::Horizontal</enum>
+                </property>
+                <property name="sizeType">
+                 <enum>QSizePolicy::Fixed</enum>
                 </property>
                 <property name="sizeHint" stdset="0">
                  <size>
@@ -437,6 +443,9 @@
                <spacer name="horizontalSpacer_8">
                 <property name="orientation">
                  <enum>Qt::Horizontal</enum>
+                </property>
+                <property name="sizeType">
+                 <enum>QSizePolicy::Expanding</enum>
                 </property>
                 <property name="sizeHint" stdset="0">
                  <size>

@@ -49,6 +49,7 @@ private:
 
     QValidator* args_validator;
 
+    void dim_err_helper(QLabel*);
     void toggle_scrollbars(bool, int);
     void toggle_headers(bool, int);
     void update_dim_label(int);

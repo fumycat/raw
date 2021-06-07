@@ -58,6 +58,10 @@ MainWindow::MainWindow(QWidget *parent)
     connect(ui->actionShow_headers, &QAction::toggled, this, [=](bool checked) {
         toggle_headers(checked, ui->tabWidget->currentIndex());
     });
+    connect(ui->actionAbout_program, &QAction::triggered, this, [=]() {
+        QMessageBox::information(this, tr("About program"), tr("Program\nAuthor: Vladislav Loginov"));
+    });
+
 
     // PushButtons
     connect(ui->btn_tab1_A, &QPushButton::clicked, this, [=](){ open_matrix_file(0); });
@@ -231,12 +235,84 @@ void MainWindow::open_matrix_file(int arr_id, bool is_vec)
         }
         matrix.push_back(l);
     }
+
+    // check vectors
     if (is_vec && _row != 1) {
         QMessageBox::warning(this, tr("Bad file"), tr("Vectors must have exactly 1 row"));
         return;
     }
-    file_ok[arr_id] = true;
 
+    // check other dims
+    switch (arr_id) {
+        case 0:
+        {
+            if ((dim[1].first != 0 && _col != dim[1].first) || (dim[2].first != 0 && _row != dim[2].first)) {
+                dim_err_helper(ui->label_tab1_A);
+                return;
+            }
+            else {
+                AuthDialog::lolcat(ui->label_tab1_A);
+            }
+            break;
+        }
+        case 1:
+        {
+            if ((dim[0].second != 0 && _row != dim[0].second) || (dim[2].second != 0 && _col != dim[2].second)) {
+                dim_err_helper(ui->label_tab1_B);
+                return;
+            }
+            else {
+                AuthDialog::lolcat(ui->label_tab1_B);
+            }
+            break;
+        }
+        case 2:
+        {
+            if ((dim[0].first != 0 && _row != dim[0].first) || (dim[1].second != 0 && _col != dim[1].second)) {
+                dim_err_helper(ui->label_tab1_C);
+                return;
+            }
+            else {
+                AuthDialog::lolcat(ui->label_tab1_C);
+            }
+            break;
+        }
+        case 3:
+        {
+            if ((dim[4].second && _col != dim[4].second) || (dim[5].second && _row != dim[5].second)) {
+                dim_err_helper(ui->label_tab2_A);
+                return;
+            }
+            else {
+                AuthDialog::lolcat(ui->label_tab2_A);
+            }
+            break;
+        }
+        case 4:
+        {
+            if (dim[3].second && _col != dim[3].second) {
+                dim_err_helper(ui->label_tab2_x);
+                return;
+            }
+            else {
+                AuthDialog::lolcat(ui->label_tab2_x);
+            }
+            break;
+        }
+        case 5:
+        {
+            if (dim[3].first && _col != dim[3].first) {
+                dim_err_helper(ui->label_tab2_y);
+                return;
+            }
+            else {
+                AuthDialog::lolcat(ui->label_tab2_y);
+            }
+            break;
+        }
+    }
+
+    file_ok[arr_id] = true;
     dim[arr_id] = qMakePair(_row, _col);
     update_dim_label(arr_id);
 
@@ -265,6 +341,12 @@ void MainWindow::put_data_into_widget(QVector<QVector<QString>> data, QTableWidg
     if (extra_col) {
         wid->setItem(0, _cols, new QTableWidgetItem("..."));
     }
+}
+
+void MainWindow::dim_err_helper(QLabel *label)
+{
+    AuthDialog::lolcat(label, nullptr, "red");
+    QMessageBox::warning(this, tr("Bad dimensions"), tr("Try again with diferent file."));
 }
 
 
