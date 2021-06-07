@@ -53,6 +53,7 @@ private:
     void toggle_scrollbars(bool, int);
     void toggle_headers(bool, int);
     void update_dim_label(int);
+    void go_send(int);
 
     void test_upload();
     int prepare_file(QString, QVector<float>*);

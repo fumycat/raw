@@ -71,11 +71,52 @@ MainWindow::MainWindow(QWidget *parent)
     connect(ui->btn_tab2_x, &QPushButton::clicked, this, [=](){ open_matrix_file(4, true); });
     connect(ui->btn_tab2_y, &QPushButton::clicked, this, [=](){ open_matrix_file(5, true); });
 
+    connect(ui->btn_1_go, &QPushButton::clicked, this, [=](){ go_send(0); });
+    connect(ui->btn_2_go, &QPushButton::clicked, this, [=](){ go_send(1); });
+
 }
 
 MainWindow::~MainWindow()
 {
     delete ui;
+}
+
+void MainWindow::go_send(int tab_index)
+{
+    qDebug() << tab_index;
+    // test token
+    QNetworkAccessManager *mgr = new QNetworkAccessManager(this);
+    QNetworkRequest request(QUrl(QString(DEFAULT_URL) + GEMM_PATH));
+    request.setHeader(QNetworkRequest::ContentTypeHeader, "application/json");
+
+    QJsonObject j;
+    j["token"] = token;
+    QByteArray data = QJsonDocument(j).toJson();
+    QNetworkReply *reply = mgr->post(request, data);
+
+    QObject::connect(reply, &QNetworkReply::finished, this, [=](){
+        if(reply->error() == QNetworkReply::NoError){
+            QByteArray data = reply->readAll();
+            QJsonDocument qjd = QJsonDocument::fromJson(data);
+            QJsonObject qjo = qjd.object();
+            qDebug() << qjo;
+            if (qjo.contains("status")) {
+                if (qjo.value("status").toString() == "Error") {
+                    ui->statusbar->showMessage(qjo.value("message").toString());
+                }
+                else {
+                    // BIG TODO
+                }
+            }
+        }
+        else{
+            QString err = reply->errorString();
+            qDebug() << "ERROR" << err;
+            ui->statusbar->showMessage("Unknown error");
+            QMessageBox::critical(this, tr("Server error"), err);
+        }
+        reply->deleteLater();
+    });
 }
 
 void MainWindow::test_upload()
@@ -315,7 +356,6 @@ void MainWindow::open_matrix_file(int arr_id, bool is_vec)
     file_ok[arr_id] = true;
     dim[arr_id] = qMakePair(_row, _col);
     update_dim_label(arr_id);
-
     put_data_into_widget(matrix, table[arr_id]);
 }
 

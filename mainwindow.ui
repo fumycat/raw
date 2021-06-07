@@ -947,7 +947,7 @@
             <item>
              <layout class="QHBoxLayout" name="horizontalLayout_10">
               <item>
-               <widget class="QPushButton" name="pushButton_6">
+               <widget class="QPushButton" name="btn_2_go">
                 <property name="text">
                  <string>Send request</string>
                 </property>
