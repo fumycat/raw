@@ -5,6 +5,7 @@ MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
     , ui(new Ui::MainWindow)
 {
+    // TODO test gemv, finish transaltion
     ui->setupUi(this);
 
     server_url = DEFAULT_URL;
@@ -13,7 +14,7 @@ MainWindow::MainWindow(QWidget *parent)
     args_validator = new QDoubleValidator(this);
     args_validator->setLocale(QLocale::C);
 
-    auto edits_for_valid = findChildren<QLineEdit*>(QRegularExpression("^(label).*(alpha|beta)$"));
+    auto edits_for_valid = findChildren<QLineEdit*>(QRegularExpression("^(line).*(alpha|beta)$"));
     foreach (auto line_e, edits_for_valid) {
         line_e->setValidator(args_validator);
     }
@@ -67,6 +68,8 @@ MainWindow::MainWindow(QWidget *parent)
     connect(ui->actionAbout_program, &QAction::triggered, this, [=]() {
         QMessageBox::information(this, tr("About program"), tr("Program\nAuthor: Vladislav Loginov"));
     });
+    connect(ui->actionClear_input, &QAction::triggered, this, [=]() { clear_input(ui->tabWidget->currentIndex()); });
+    connect(ui->actionExit, &QAction::triggered, this, [=]() { QApplication::exit(); });
 
 
     // PushButtons
@@ -134,6 +137,9 @@ void MainWindow::go_send(int tab_index)
         j["C"] = data[2];
         j["alpha"] = ui->lineEdit_tab1_alpha->text();
         j["beta"] = ui->lineEdit_tab1_beta->text();
+        j["m"] = dim[0].first;
+        j["n"] = dim[1].second;
+        j["k"] = dim[0].second;
         break;
     case 1:
         j["A"] = data[3];
@@ -141,6 +147,8 @@ void MainWindow::go_send(int tab_index)
         j["y"] = data[5];
         j["alpha"] = ui->lineEdit_tab2_alpha->text();
         j["beta"] = ui->lineEdit_tab2_beta->text();
+        j["m"] = dim[3].first;
+        j["n"] = dim[3].second;
         break;
     }
     QByteArray data = QJsonDocument(j).toJson();
@@ -156,147 +164,47 @@ void MainWindow::go_send(int tab_index)
             QByteArray data = reply->readAll();
             QJsonDocument qjd = QJsonDocument::fromJson(data);
             QJsonObject qjo = qjd.object();
-            qDebug() << qjo;
+            // qDebug() << qjo; // dont do that
             if (qjo.contains("status")) {
                 if (qjo.value("status").toString() == "Error") {
                     ui->statusbar->showMessage(qjo.value("message").toString());
+                    QMessageBox::warning(this, tr("Client error"), "Server has not been able to perform your request:\n" + qjo.value("message").toString());
                 }
                 else {
+                    ui->statusbar->showMessage(tr("Ok"));
                     // BIG TODO
-                    qDebug() << "success";
+                    qDebug() << "Ok";
+                    QString rdata = qjo.value("result").toString();
+                    QString out_filename;
+                    if (save_C) {
+                        QString dts = QDateTime::currentDateTime().toString();
+                        dts.replace(':', '-');
+                        out_filename = QStandardPaths::writableLocation(QStandardPaths::DocumentsLocation) + "/" + dts + ".txt";
+                    } else {
+                        out_filename = QFileDialog::getSaveFileName(this,
+                                                                    tr("Save Output Matrix"), "",
+                                                                    tr("All Files (*)"));
+                    }
+                    QFile out(out_filename);
+                    if (out.open(QIODevice::WriteOnly)) {
+                        out.write(rdata.toUtf8());
+                    }
+                    else {
+                        ui->statusbar->showMessage(tr("Result was not written"));
+                    }
                 }
             }
         }
-        else{
+        else {
             QString err = reply->errorString();
             qDebug() << "ERROR" << err;
-            ui->statusbar->showMessage(tr("Unknown error"));
+            ui->statusbar->showMessage(tr("Internal Server Error"));
             QMessageBox::critical(this, tr("Server error"), err);
         }
         reply->deleteLater();
         go_btn[tab_index]->setEnabled(true);
     });
 }
-
-void MainWindow::test_upload()
-{
-    QJsonObject j;
-    QFile f("C:\\as.txt");
-    if (!f.open(QIODevice::ReadOnly | QIODevice::Text)) {
-        qDebug() << "Can't open file"; // TODO
-        return;
-    }
-    j["data"] = QString::fromUtf8(f.readAll());
-
-    QNetworkAccessManager *mgr = new QNetworkAccessManager(this);
-    QNetworkRequest request(QUrl(QString(server_url) + "upload"));
-    request.setHeader(QNetworkRequest::ContentTypeHeader, "application/json");
-    QByteArray data = QJsonDocument(j).toJson();
-    ui->statusbar->showMessage("posting...");
-    QNetworkReply *reply = mgr->post(request, data);
-    ui->statusbar->showMessage("sent?");
-
-    QObject::connect(reply, &QNetworkReply::finished, this, [=](){
-        if(reply->error() == QNetworkReply::NoError){
-            QByteArray data = reply->readAll();
-            QJsonDocument qjd = QJsonDocument::fromJson(data);
-            QJsonObject qjo = qjd.object();
-            qDebug() << qjo;
-            if (qjo.contains("status")) {
-                ui->statusbar->showMessage(qjo.value("status").toString());
-            }
-        }
-        else{
-            QString err = reply->errorString();
-            qDebug() << "ERROR" << err;
-            ui->statusbar->showMessage("Unknown error"); // maybe show messagebox?
-        }
-        reply->deleteLater();
-    });
-}
-
-void MainWindow::onfinish_test(QNetworkReply *reply)
-{
-    if(reply->error() != QNetworkReply::NoError)
-    {
-        qDebug() << "finish_test_err " << reply->errorString();
-    } else
-    {
-        qDebug() << "finish_test " << reply->readAll();
-    }
-}
-
-void MainWindow::onfinish(QNetworkReply *reply)
-{
-    if(reply->error() != QNetworkReply::NoError)
-        {
-            qDebug() << reply->errorString();
-        }
-        else
-        {
-            QByteArray responseData = reply->readAll();
-            QString qstr(responseData);
-            qDebug() << qstr;
-            QString fileName = QFileDialog::getSaveFileName(this,
-                    tr("Save Output Matrix"), "",
-                    tr("All Files (*)"));
-            QFile file(fileName);
-            if (!file.open(QIODevice::WriteOnly)) {
-                        QMessageBox::information(this, tr("Unable to open file"),
-                            file.errorString());
-                        return;
-                    }
-            file.write(qstr.toUtf8());
-
-
-            QVector<QVector<QString>> matrix;
-            QTextStream in(qstr.toUtf8());
-            QString xd;
-            int n;
-            in >> n;
-            for (int i = 0; i < n; i++) {
-                QVector<QString> l;
-                for (int j = 0; j < n; j++) {
-                    in >> xd;
-                    l.append(xd);
-                }
-                matrix.append(l);
-            }
-            // put_data_into_widget(matrix, ui->tableWidget_Res);
-        }
-}
-
-// TODO MULTIPART
-/*
-{
-    // send request
-    if ((!file_ok[0]) || (!file_ok[1])) {
-        QMessageBox::warning(this, tr("Ошибка"),
-                                       tr("Нужно выбрать два файла."),
-                                       QMessageBox::Ok);
-        return;
-    }
-    QHttpMultiPart *multiPart = new QHttpMultiPart(QHttpMultiPart::FormDataType);
-    QHttpPart textPart0;
-    textPart0.setHeader(QNetworkRequest::ContentDispositionHeader, QVariant("form-data; name=\"text0\""));
-    // textPart0.setBody(arr[0].toUtf8());
-
-    QHttpPart textPart1;
-    textPart1.setHeader(QNetworkRequest::ContentDispositionHeader, QVariant("form-data; name=\"text1\""));
-    // textPart1.setBody(arr[1].toUtf8());
-
-    multiPart->append(textPart0);
-    multiPart->append(textPart1);
-
-    QUrl xurl("http://localhost/upload/");
-    xurl.setPort(6677);
-    QNetworkRequest request(xurl);
-
-    QNetworkAccessManager *manager = new QNetworkAccessManager(this);
-    connect(manager, SIGNAL(finished(QNetworkReply*)), this, SLOT(onfinish(QNetworkReply*)));
-    manager->post(request, multiPart);
-}
-*/
 
 void MainWindow::open_matrix_file(int arr_id, bool is_vec, QString debug_filename)
 {
@@ -450,36 +358,6 @@ void MainWindow::dim_err_helper(QLabel *label)
     QMessageBox::warning(this, tr("Bad dimensions"), tr("Try again with diferent file."));
 }
 
-
-    // test button
-    /*
-    if ((!files_selected[0]) || (!files_selected[1])) {
-        QMessageBox::warning(this, tr("Ошибка"),
-                                       tr("Нужно выбрать два файла."),
-                                       QMessageBox::Ok);
-        return;
-    }
-    QHttpMultiPart *multiPart = new QHttpMultiPart(QHttpMultiPart::FormDataType);
-    const int parts = 2;
-    QHttpPart qpart[parts];
-    for (int i = 0; i< parts; ++i) {
-        qpart[i].setHeader(QNetworkRequest::ContentTypeHeader, QVariant("application/octet-stream"));
-        qpart[i].setHeader(QNetworkRequest::ContentDispositionHeader, QVariant(QString("form-data; name=\"file%1\"").arg(i)));
-        QFile *file = new QFile(fnames[i]);
-        file->open(QIODevice::ReadOnly);
-        qpart[i].setBodyDevice(file);
-        multiPart->append(qpart[i]);
-    }
-    QUrl xurl("http://localhost/t/");
-    xurl.setPort(6677);
-    QNetworkRequest request(xurl);
-
-    QNetworkAccessManager *manager = new QNetworkAccessManager(this);
-    connect(manager, SIGNAL(finished(QNetworkReply*)), this, SLOT(onfinish_test(QNetworkReply*)));
-    manager->post(request, multiPart);
-    */
-    // test_upload();
-
 void MainWindow::toggle_scrollbars(bool show, int tab_index)
 {
     Qt::ScrollBarPolicy policy = Qt::ScrollBarAlwaysOff;
@@ -515,4 +393,26 @@ void MainWindow::on_tabWidget_currentChanged(int index)
 {
     toggle_scrollbars(ui->actionShow_scrollbars->isChecked(), index);
     toggle_headers(ui->actionShow_headers->isChecked(), index);
+}
+
+void MainWindow::clear_input(int tab_index)
+{
+    for (int i = 3 * tab_index; i < 3 * tab_index + 3; i++) {
+        data[i] = "";
+        file_ok[i] = false;
+        label_dim[i]->setText("");
+        dim[i] = qMakePair(0, 0);
+        QAbstractItemModel* const mdl = table[i]->model();
+        mdl->removeRows(0, mdl->rowCount());
+        mdl->removeColumns(0, mdl->columnCount());
+    }
+    if (tab_index) {
+        ui->lineEdit_tab2_alpha->setText("");
+        ui->lineEdit_tab2_beta->setText("");
+    }
+    else {
+        ui->lineEdit_tab1_alpha->setText("");
+        ui->lineEdit_tab1_beta->setText("");
+    }
+
 }

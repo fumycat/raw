@@ -462,7 +462,7 @@
               <item>
                <widget class="QCheckBox" name="checkBox_tab1">
                 <property name="text">
-                 <string>CheckBox</string>
+                 <string>Auto filename</string>
                 </property>
                </widget>
               </item>
@@ -925,7 +925,7 @@
               <item>
                <widget class="QCheckBox" name="checkBox_tab2">
                 <property name="text">
-                 <string>CheckBox</string>
+                 <string>Auto filename</string>
                 </property>
                </widget>
               </item>
@@ -1004,6 +1004,8 @@
     <property name="title">
      <string>File</string>
     </property>
+    <addaction name="actionClear_input"/>
+    <addaction name="actionExit"/>
    </widget>
    <widget class="QMenu" name="menuSettings">
     <property name="title">
@@ -1048,6 +1050,16 @@
    </property>
    <property name="shortcut">
     <string>Alt+H</string>
+   </property>
+  </action>
+  <action name="actionClear_input">
+   <property name="text">
+    <string>Clear input</string>
+   </property>
+  </action>
+  <action name="actionExit">
+   <property name="text">
+    <string>Exit</string>
    </property>
   </action>
  </widget>

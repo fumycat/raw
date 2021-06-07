@@ -88,8 +88,8 @@
     <message>
         <location filename="mainwindow.ui" line="465"/>
         <location filename="mainwindow.ui" line="928"/>
-        <source>CheckBox</source>
-        <translation type="unfinished"></translation>
+        <source>Auto filename</source>
+        <translation>Автоматически записать результат в файл</translation>
     </message>
     <message>
         <location filename="mainwindow.ui" line="489"/>
@@ -165,74 +165,107 @@
         <translation>Alt+H</translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="62"/>
+        <location filename="mainwindow.cpp" line="68"/>
         <source>About program</source>
         <translation>О программе</translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="62"/>
+        <location filename="mainwindow.cpp" line="68"/>
         <source>Program
 Author: Vladislav Loginov</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="115"/>
         <source>Unknown error</source>
-        <translation>Неизвестная ошибка</translation>
+        <translation type="vanished">Неизвестная ошибка</translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="116"/>
+        <location filename="mainwindow.cpp" line="199"/>
         <source>Server error</source>
         <translation>Ошибка сервера</translation>
     </message>
     <message>
         <location filename="mainwindow.cpp" line="182"/>
+        <location filename="mainwindow.cpp" line="266"/>
         <source>Save Output Matrix</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="183"/>
-        <source>All Files (*)</source>
+        <location filename="mainwindow.cpp" line="103"/>
+        <location filename="mainwindow.cpp" line="120"/>
+        <source>Input error</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="186"/>
+        <location filename="mainwindow.cpp" line="103"/>
+        <source>One or more files are not selected.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="mainwindow.cpp" line="120"/>
+        <source>Enter alpha and beta values.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="mainwindow.cpp" line="168"/>
+        <source>Client error</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="mainwindow.cpp" line="171"/>
+        <source>Ok</source>
+        <translation>Ок</translation>
+    </message>
+    <message>
+        <location filename="mainwindow.cpp" line="183"/>
+        <location filename="mainwindow.cpp" line="267"/>
+        <source>All Files (*)</source>
+        <translation>Все файлы (*)</translation>
+    </message>
+    <message>
+        <location filename="mainwindow.cpp" line="188"/>
+        <location filename="mainwindow.cpp" line="270"/>
         <source>Unable to open file</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="244"/>
+        <location filename="mainwindow.cpp" line="198"/>
+        <source>Internal Server Error</source>
+        <translation>Внутреняя ошибка сервера</translation>
+    </message>
+    <message>
+        <location filename="mainwindow.cpp" line="329"/>
         <source>Open text file</source>
-        <translation type="unfinished"></translation>
+        <translation>Открыть файл матрицы</translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="244"/>
+        <location filename="mainwindow.cpp" line="329"/>
         <source>Text files (*.txt, *)</source>
-        <translation type="unfinished"></translation>
+        <translation>Файл текста (*.txt, *)</translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="269"/>
-        <location filename="mainwindow.cpp" line="282"/>
+        <location filename="mainwindow.cpp" line="355"/>
+        <location filename="mainwindow.cpp" line="368"/>
         <source>Bad file</source>
         <translation>Плохой файл</translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="269"/>
+        <location filename="mainwindow.cpp" line="355"/>
         <source>No valid matrix in file</source>
         <translation>В выбранном файле не корректная матрица</translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="282"/>
+        <location filename="mainwindow.cpp" line="368"/>
         <source>Vectors must have exactly 1 row</source>
         <translation>Вектор должен иметь ровно одну строку</translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="389"/>
+        <location filename="mainwindow.cpp" line="475"/>
         <source>Bad dimensions</source>
         <translation>Плохой размер матрицы</translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="389"/>
+        <location filename="mainwindow.cpp" line="475"/>
         <source>Try again with diferent file.</source>
         <translation>Попробуйте другой файл.</translation>
     </message>

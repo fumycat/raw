@@ -19,6 +19,8 @@
 #include <QTimer>
 #include <QValidator>
 #include <QPair>
+#include <QStandardPaths>
+#include <QDateTime>
 
 #include "authdialog.h"
 
@@ -35,11 +37,12 @@ public:
     ~MainWindow();
 
 private slots:
-    void onfinish(QNetworkReply *rep);
-    void onfinish_test(QNetworkReply *rep);
     void on_tabWidget_currentChanged(int index);
 
 private:
+    Ui::MainWindow *ui;
+    QValidator* args_validator;
+
     QString server_url;
     QString token;
     QTableWidget* table[6];
@@ -49,21 +52,16 @@ private:
     bool file_ok[6];
     QPair<int, int> dim[6];
 
-    QValidator* args_validator;
-
     void dim_err_helper(QLabel*);
     void toggle_scrollbars(bool, int);
     void toggle_headers(bool, int);
     void update_dim_label(int);
     void go_send(int);
+    void clear_input(int);
 
-    void test_upload();
-    int prepare_file(QString, QVector<float>*);
     void open_matrix_file(int, bool is_vec = false, QString debug_filename = nullptr);
     void put_data_into_widget(QVector<QVector<QString>> data, QTableWidget *wid);
-    Ui::MainWindow *ui;
-    // QString arr[2];
-    // QString fnames[2];
+
 
 };
 #endif // MAINWINDOW_H
