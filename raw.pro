@@ -28,7 +28,11 @@ else: unix:!android: target.path = /opt/$${TARGET}/bin
 !isEmpty(target.path): INSTALLS += target
 
 RESOURCES += \
-    latex.qrc
+    latex.qrc \
+    translations.qrc
 
 DISTFILES += \
     .gitignore
+
+TRANSLATIONS += QtLanguage_ru.ts QtLanguage_ru.qm
+CODECFORSRC     = UTF-8

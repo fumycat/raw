@@ -1,6 +1,7 @@
 #ifndef RAW_GLOBAL_H
 #define RAW_GLOBAL_H
 
+#define SET_LANG_RU
 #define DEFAULT_URL "http://localhost:6677/"
 
 // Authentication

@@ -112,7 +112,7 @@ void MainWindow::go_send(int tab_index)
         else{
             QString err = reply->errorString();
             qDebug() << "ERROR" << err;
-            ui->statusbar->showMessage("Unknown error");
+            ui->statusbar->showMessage(tr("Unknown error"));
             QMessageBox::critical(this, tr("Server error"), err);
         }
         reply->deleteLater();
