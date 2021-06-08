@@ -123,8 +123,8 @@ void MainWindow::go_send(int tab_index)
         QMessageBox::warning(this, tr("Input error"), tr("Enter alpha and beta values."));
         return;
     }
-    bool save_C = tab_index == 0 && ui->checkBox_tab1->isChecked();
-    bool save_y = tab_index == 1 && ui->checkBox_tab2->isChecked();
+    bool auto_save;
+    auto_save = (tab_index == 0 && ui->checkBox_tab1->isChecked()) || (tab_index == 1 && ui->checkBox_tab2->isChecked());
 
     go_btn[tab_index]->setEnabled(false);
 
@@ -176,7 +176,7 @@ void MainWindow::go_send(int tab_index)
                     qDebug() << "Ok";
                     QString rdata = qjo.value("result").toString();
                     QString out_filename;
-                    if (save_C) {
+                    if (auto_save) {
                         QString dts = QDateTime::currentDateTime().toString();
                         dts.replace(':', '-');
                         out_filename = QStandardPaths::writableLocation(QStandardPaths::DocumentsLocation) + "/" + dts + ".txt";
