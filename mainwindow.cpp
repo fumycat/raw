@@ -10,6 +10,8 @@ MainWindow::MainWindow(QWidget *parent)
 
     server_url = DEFAULT_URL;
 
+    const QString about_desc = tr("Program for solving linear algebra problems\nAuthor: Vladislav Loginov\nE-mail: fumycat@gmail.com");
+
     // Validator init
     args_validator = new QDoubleValidator(this);
     args_validator->setLocale(QLocale::C);
@@ -66,7 +68,7 @@ MainWindow::MainWindow(QWidget *parent)
         toggle_headers(checked, ui->tabWidget->currentIndex());
     });
     connect(ui->actionAbout_program, &QAction::triggered, this, [=]() {
-        QMessageBox::information(this, tr("About program"), tr("Program\nAuthor: Vladislav Loginov"));
+        QMessageBox::information(this, tr("About program"), about_desc);
     });
     connect(ui->actionClear_input, &QAction::triggered, this, [=]() { clear_input(ui->tabWidget->currentIndex()); });
     connect(ui->actionExit, &QAction::triggered, this, [=]() { QApplication::exit(); });
@@ -168,7 +170,7 @@ void MainWindow::go_send(int tab_index)
             if (qjo.contains("status")) {
                 if (qjo.value("status").toString() == "Error") {
                     ui->statusbar->showMessage(qjo.value("message").toString());
-                    QMessageBox::warning(this, tr("Client error"), "Server has not been able to perform your request:\n" + qjo.value("message").toString());
+                    QMessageBox::warning(this, tr("Client error"), tr("Server has not been able to perform your request:") + "\n" + qjo.value("message").toString());
                 }
                 else {
                     ui->statusbar->showMessage(tr("Ok"));

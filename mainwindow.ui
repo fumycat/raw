@@ -1000,6 +1000,9 @@
    <property name="text">
     <string>About program...</string>
    </property>
+   <property name="shortcut">
+    <string>?</string>
+   </property>
   </action>
   <action name="actionShow_headers">
    <property name="checkable">
@@ -1016,10 +1019,16 @@
    <property name="text">
     <string>Clear input</string>
    </property>
+   <property name="shortcut">
+    <string>C</string>
+   </property>
   </action>
   <action name="actionExit">
    <property name="text">
     <string>Exit</string>
+   </property>
+   <property name="shortcut">
+    <string>Q</string>
    </property>
   </action>
  </widget>
