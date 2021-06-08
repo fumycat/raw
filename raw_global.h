@@ -1,13 +1,17 @@
 #ifndef RAW_GLOBAL_H
 #define RAW_GLOBAL_H
 
+#include <QDebug>
+#include <QtNetwork>
+#include <QTimer>
+
 #define SET_LANG_RU
 #define DEFAULT_URL "http://localhost:6677/"
 #define AUTH_DELAY 2000
 
 // DEBUG
-#define DEBUG_TOKEN "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VybmFtZSI6ImFkbWluIn0.e3UwvG12weaHaVWZ2u-vuH1SkOb6Ee0NFMVJGtTgwio"
-#define DEBUG_AUTO_FILES
+// #define DEBUG_TOKEN "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VybmFtZSI6ImFkbWluIn0.e3UwvG12weaHaVWZ2u-vuH1SkOb6Ee0NFMVJGtTgwio"
+// #define DEBUG_AUTO_FILES
 
 // Paths
 #define AUTH_PATH "auth"

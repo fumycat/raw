@@ -4,10 +4,7 @@
 #include "raw_global.h"
 
 #include <QDialog>
-#include <QtNetwork>
-#include <QDebug>
 #include <QLabel>
-#include <QTimer>
 
 namespace Ui {
 class AuthDialog;

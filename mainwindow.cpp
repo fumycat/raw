@@ -5,7 +5,6 @@ MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
     , ui(new Ui::MainWindow)
 {
-    // TODO test gemv, finish transaltion
     ui->setupUi(this);
 
     server_url = DEFAULT_URL;
@@ -128,6 +127,7 @@ void MainWindow::go_send(int tab_index)
     bool auto_save;
     auto_save = (tab_index == 0 && ui->checkBox_tab1->isChecked()) || (tab_index == 1 && ui->checkBox_tab2->isChecked());
 
+    ui->statusbar->clearMessage();
     go_btn[tab_index]->setEnabled(false);
 
     QJsonObject j;
@@ -160,13 +160,11 @@ void MainWindow::go_send(int tab_index)
     request.setHeader(QNetworkRequest::ContentTypeHeader, "application/json");
     QNetworkReply *reply = mgr->post(request, data);
 
-
     QObject::connect(reply, &QNetworkReply::finished, this, [=](){
         if(reply->error() == QNetworkReply::NoError){
             QByteArray data = reply->readAll();
             QJsonDocument qjd = QJsonDocument::fromJson(data);
             QJsonObject qjo = qjd.object();
-            // qDebug() << qjo; // dont do that
             if (qjo.contains("status")) {
                 if (qjo.value("status").toString() == "Error") {
                     ui->statusbar->showMessage(qjo.value("message").toString());
@@ -174,7 +172,6 @@ void MainWindow::go_send(int tab_index)
                 }
                 else {
                     ui->statusbar->showMessage(tr("Ok"));
-                    // BIG TODO
                     qDebug() << "Ok";
                     QString rdata = qjo.value("result").toString();
                     QString out_filename;
@@ -416,5 +413,4 @@ void MainWindow::clear_input(int tab_index)
         ui->lineEdit_tab1_alpha->setText("");
         ui->lineEdit_tab1_beta->setText("");
     }
-
 }

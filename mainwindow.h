@@ -4,19 +4,12 @@
 #include "raw_global.h"
 
 #include <QMainWindow>
-#include <QNetworkReply>
 #include <QTableWidget>
 #include <QMessageBox>
 #include <QVector>
-#include <QtNetwork/QNetworkAccessManager>
 #include <QJsonDocument>
 #include <QJsonObject>
-#include <QUrl>
 #include <QFileDialog>
-#include <QHttpMultiPart>
-#include <QDataStream>
-#include <QTemporaryFile>
-#include <QTimer>
 #include <QValidator>
 #include <QPair>
 #include <QStandardPaths>

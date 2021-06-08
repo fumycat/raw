@@ -37,7 +37,7 @@ void AuthDialog::on_pushButton_auth_clicked()
             QJsonObject qjo = qjd.object();
             if (qjo.contains("status")) {
                 if (qjo.value("status").toString() == "Ok") {
-                    lolcat(ui->label_status, "Ok");
+                    lolcat(ui->label_status, tr("Ok"));
                     *this->token = qjo.value("token").toString();
                     QDialog::accept();
                 }
@@ -51,7 +51,7 @@ void AuthDialog::on_pushButton_auth_clicked()
         else {
             QString err = reply->errorString();
             qDebug() << "ERROR" << err;
-            lolcat(ui->label_status, "Unknown error", "pink");
+            lolcat(ui->label_status, tr("Unknown error"), "pink");
             QTimer::singleShot(AUTH_DELAY, this, [this]() { ui->pushButton_auth->setEnabled(true); });
         }
         reply->deleteLater();
